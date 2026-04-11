@@ -12,9 +12,10 @@ DigitalIn   buttonB(D5);
 DigitalIn   buttonC(D6);
 DigitalIn   buttonD(D7);
 DigitalOut  gasAlarm(LED1);
-DigitalOut  ovenAlarm(LED2);
+DigitalOut  tempAlarm(LED2);
 
 bool toggleGas = false;
+bool toggleTemp = false;
 
 //Prototype functions
 void outputs();
@@ -48,7 +49,7 @@ void inputs(){
 
 void outputs(){
     gasAlarm = 0;
-    ovenAlarm = 0;
+    tempAlarm = 0;
 }
 
 //Menu function that carries out tasks based on user input on serial monitor
@@ -81,7 +82,19 @@ void menu(){
             case '3':
                 tempAlarmState();
                 menuMessage();
-                break;               
+                break; 
+            case '4':
+                //Toggles on and off the boolean variable
+                toggleTemp = !toggleTemp;
+                if (toggleTemp){
+                    uartUsb.write("Temp alarm simulation is active!\r\n", 34);
+                    tempAlarm = 1;
+                }else {
+                    uartUsb.write("Temp alarm simulation is off!\r\n", 31);
+                    tempAlarm = 0;
+                }
+                menuMessage();
+                break;              
             //If an input is not a menu input, asks the user for another input    
             default:
                 uartUsb.write("Invalid Input, Try again.\r\n", 27);
@@ -91,21 +104,21 @@ void menu(){
     
 }
 
+//Function that detects if oven sensor is active and prints to serial monitor
+void tempAlarmState(){
+    if(tempAlarm || tempSensor){
+        uartUsb.write("\nTEMPERATURE ALARM ACTIVE\r\n", 27);
+    }else{
+        uartUsb.write("\nTEMPERATURE ALARM CLEAR\r\n", 26);
+    }
+}
+
 //Function that detects if gas sensor is active and prints to serial monitor
 void gasAlarmState(){
     if(gasAlarm || gasSensor){
         uartUsb.write("\nGAS ALARM ACTIVE\r\n", 19);
     }else{
         uartUsb.write("\nGAS ALARM CLEAR\r\n", 18);
-    }
-}
-
-//Function that detects if oven sensor is active and prints to serial monitor
-void tempAlarmState(){
-    if(tempSensor){
-        uartUsb.write("\nTEMPERATURE ALARM ACTIVE\r\n", 27);
-    }else{
-        uartUsb.write("\nTEMPERATURE ALARM CLEAR\r\n", 26);
     }
 }
 
@@ -122,3 +135,4 @@ void menuMessage(){
     uartUsb.write("Press 5 to show and reset both alarms.\r\n", 40);
     uartUsb.write("Press 6 to Open/Exit monitoring mode.\r\n", 39);
 }
+
