@@ -37,6 +37,7 @@ int main(){
 }
 
 void inputs(){
+    //Set the mode that the button will be used
     gasSensor.mode(PullDown);
     tempSensor.mode(PullDown);
     buttonA.mode(PullDown);
@@ -52,11 +53,15 @@ void outputs(){
 
 //Menu function that carries out tasks based on user input on serial monito
 void menu(){
+    //Reset the input
     char receivedchar = '\0';
+    //Scans for users input via serial monitor
     if(uartUsb.readable()){
         uartUsb.read(&receivedchar, 1);
+        //User inputs number character to select menu option
         switch (receivedchar){
             case '1':
+                //Toggles on and off the boolean variable
                 toggleGas = !toggleGas;
                 if (toggleGas){
                     uartUsb.write("Gas alarm simulation is active!\r\n", 33);
@@ -68,9 +73,13 @@ void menu(){
                 menuMessage();
                 break;
             case '2':
+            //Calls Function to check the gas alarm state
                 gasAlarmState();
                 menuMessage();
                 break;
+            //If an input is not a menu input, asks the user for another input    
+            default:
+                uartUsb.write("Invalid Input, Try again.\r\n", 27);
         }
 
     }
