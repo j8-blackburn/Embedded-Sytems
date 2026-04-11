@@ -51,7 +51,7 @@ void outputs(){
     ovenAlarm = 0;
 }
 
-//Menu function that carries out tasks based on user input on serial monito
+//Menu function that carries out tasks based on user input on serial monitor
 void menu(){
     //Reset the input
     char receivedchar = '\0';
